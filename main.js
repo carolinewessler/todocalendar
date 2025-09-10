@@ -1,39 +1,49 @@
-// app/calendar/page.tsx
-'use client'
-
-import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
+import { Calendar } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import ptBr from '@fullcalendar/core/locales/pt-br'
 
-const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false })
+// estilos do FullCalendar
+import '@fullcalendar/daygrid'
 
-export default function CalendarPage() {
-  // tasks -> events (exemplo)
-  const events = useMemo(() => ([
-    { id: '1', title: 'Estudar React', start: '2025-09-10' },
-    { id: '2', title: 'Refatorar To-Do', start: '2025-09-11', end: '2025-09-12' }
-  ]), [])
+// tasks -> events (exemplo)
+const events = [
+  { id: '1', title: 'Estudar React', start: '2025-09-10' },
+  { id: '2', title: 'Refatorar To-Do', start: '2025-09-11', end: '2025-09-12' }
+]
 
-  return (
-    <div style={{ padding: 16 }}>
-      <h1>Tasks Calendar</h1>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView='dayGridMonth'
-        locale='pt-br'
-        events={events}
-        dateClick={(info) => {
-          // abrir modal/criar task com dueDate = info.dateStr
-          console.log('dia clicado:', info.dateStr)
-        }}
-        eventClick={(info) => {
-          // abrir detalhes/editar task
-          console.log('task:', info.event.id)
-        }}
-        editable
-        selectable
-      />
-    </div>
-  )
-}
+// cria container
+const container = document.querySelector('.body')
+// container.style.padding = '16px'
+
+// título
+// const h1 = document.createElement('h1')
+// h1.textContent = 'Tasks Calendar'
+// container.appendChild(h1)
+
+// div para o calendário
+const calendarEl = document.createElement('div')
+container.appendChild(calendarEl)
+
+// adiciona tudo ao body
+// document.body.appendChild(container)
+
+// inicializa FullCalendar
+const calendar = new Calendar(calendarEl, {
+  plugins: [dayGridPlugin, interactionPlugin],
+  initialView: 'dayGridMonth',
+  locale: ptBr,
+  events,
+  dateClick(info) {
+    console.log('dia clicado:', info.dateStr)
+    alert(`clicou no dia: ${info.dateStr}`)
+  },
+  eventClick(info) {
+    console.log('task:', info.event.id, info.event.title)
+    alert(`task: ${info.event.title}`)
+  },
+  editable: true,
+  selectable: true
+})
+
+calendar.render()
